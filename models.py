@@ -20,29 +20,6 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
     
-
-class Exercise(db.Model):
-    __tablename__ = 'exercise'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    type = Column(String)
-
-    def __init__(self, name, type):
-        self.name = name
-        self.type = type
-
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def format(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'type': self.type,
-        }
-
 class Record(db.Model):
     __tablename__ = 'record'
 
@@ -50,14 +27,14 @@ class Record(db.Model):
     reps = Column(Integer)
     rest = Column(String)
     weight = Column(String(6))
-    exercise_id = Column(Integer, ForeignKey('exercise.id'), nullable=False)
+    exercise = Column(String(20), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     
-    def __init__(self, reps, rest, weight, exercise_id, user_id):
+    def __init__(self, reps, rest, weight, exercise, user_id):
         self.reps = reps
         self.rest = rest
         self.weight = weight
-        self.exercise_id = exercise_id
+        self.exercise= exercise
         self.user_id = user_id
 
     def insert(self):
@@ -74,7 +51,7 @@ class Record(db.Model):
             'reps': self.reps,
             'rest': self.rest,
             'weight': self.weight,
-            'exercise_id': self.exercise_id,
+            'exercise': self.exercise,
         }
 
 class User(db.Model):

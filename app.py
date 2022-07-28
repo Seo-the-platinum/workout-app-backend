@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, abort
-from models import setup_db, Exercise, User, Visit, Record
+from models import setup_db, User, Visit, Record
 from flask_cors import CORS
 import sys
 
@@ -8,30 +8,7 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app)
 
-#Important!, come back and learn this below!
- #   @app.after_request
-    #def after_request(response):
-       # response.headers.add(
-           # 'Access-Control-Allow-Headers', 'Content-Type, Authorization')
-       # response.headers.add(
-           # 'Access-Control-Allow-Methods', 'GET, DELETE , POST, PATCH')
-      #  return response
-    
     #----GET ENPOINTS----
-    @app.route('/exercises', methods=['GET'])
-    def get_exercises():
-        try:
-            exercise = Exercise.query.all()
-            formatted_exercises = [exercise.format() for exercise in exercise]
-
-        except ValueError as e:
-            print(e)
-            abort(e)
-        
-        return jsonify({
-            'success': True,
-            'exercises': formatted_exercises
-        })
 
     @app.route('/users', methods=['GET'])
     def get_users():
@@ -52,14 +29,28 @@ def create_app(test_config=None):
     def get_user(user_id):
         print(user_id, file=sys.stderr)
         user = User.query.filter(User.id == user_id).one_or_none()
-        print('should be here:',user.records, file=sys.stderr)
-        print('or maybe here',user.records, file=sys.stdout)
+
         if user is None:
            abort()
         
+        try:
+            data=[]
+            if len(user.records):
+                formatted_records = [record.format() for record in user.records]
+                data.append({
+                    'user': user.format(),
+                    'records': formatted_records
+                })
+            else:
+                data.append({
+                    'user': user.format(),
+                })
+        except ValueError as e:
+            print(e)
+
         return jsonify({
             'success': True,
-            'user': user.format(),
+            'user': data
         })
         
     @app.route('/records', methods=['GET'])
@@ -78,24 +69,6 @@ def create_app(test_config=None):
             })
 
     #----POST ENDPOINTS----
-    @app.route('/exercises/create', methods=['POST'])
-    def create_exercise():
-        try:
-            res = request.get_json()
-            print(res)
-            exercise = Exercise(
-                name = res['name'],
-                type = res['type']
-            )
-            exercise.insert()
-
-        except ValueError as e:
-            print(e)
-
-        return jsonify({
-            'success': True,
-            'exercise': exercise.id,
-        })
 
     @app.route('/users/create', methods=['POST'])
     def create_user():
@@ -145,7 +118,7 @@ def create_app(test_config=None):
         try:
             res = request.get_json()
             record = Record(
-                exercise_id = res['exercise_id'],
+                exercise = res['exercise'],
                 reps = res['reps'],
                 rest = res['rest'],
                 weight = res['weight'],
