@@ -26,16 +26,18 @@ class Record(db.Model):
     id = Column(Integer, primary_key=True)
     reps = Column(Integer)
     rest = Column(String)
-    weight = Column(String(6))
+    weight = Column(Integer, nullable=False)
+    weight_units = Column(String(3), nullable=False)
     exercise = Column(String(20), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     
-    def __init__(self, reps, rest, weight, exercise, user_id):
+    def __init__(self, reps, rest, weight, exercise, user_id, weight_units):
         self.reps = reps
         self.rest = rest
         self.weight = weight
         self.exercise= exercise
         self.user_id = user_id
+        self.weight_units = weight_units
 
     def insert(self):
         db.session.add(self)
@@ -52,6 +54,7 @@ class Record(db.Model):
             'rest': self.rest,
             'weight': self.weight,
             'exercise': self.exercise,
+            'weight_units': self.weight_units,
         }
 
 class User(db.Model):

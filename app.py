@@ -122,6 +122,7 @@ def create_app(test_config=None):
                 reps = res['reps'],
                 rest = res['rest'],
                 weight = res['weight'],
+                weight_units = res['weight_units'],
                 user_id = res['user_id'],
             )
             record.insert()
