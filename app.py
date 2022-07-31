@@ -8,6 +8,13 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app)
 
+    @app.after_request
+    def after_request(response):
+        response.headers.add(
+            'Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        response.headers.add(
+            'Access-Control-Allow-Methods', 'GET, DELETE , POST, PATCH')
+        return response
     #----GET ENPOINTS----
 
     @app.route('/users', methods=['GET'])
@@ -135,8 +142,32 @@ def create_app(test_config=None):
             'record': record.id
         })
 
-    #----EDIT ENDPOINTS----
+    #----PATCH ENDPOINTS----
 
+    @app.route('/records/<int:record_id>', methods=['PATCH'])
+    def update_record(record_id):
+        res = request.get_json()
+        record = Record.query.filter(
+            Record.id == record_id
+        ).one_or_none()
+        if record is None:
+            abort('no record with that id')
+        
+        try:
+            record.reps = res['reps']
+            record.rest = res['rest']
+            record.weight = res['weight']
+            record.weight_units = res['weight_units']
+            
+            record.update()
+
+        except ValueError as e:
+            print(e)
+        
+        return jsonify({
+            'success': True,
+            'record': record.format() 
+        })
     return app
 app = create_app()
 
