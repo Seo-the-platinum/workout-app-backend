@@ -168,6 +168,25 @@ def create_app(test_config=None):
             'success': True,
             'record': record.format() 
         })
+    
+    #----DELETE ENDPOINTS----
+
+    @app.route('/records/delete/<int:record_id>', methods=['DELETE'])
+    def delete_record(record_id):
+        record = Record.query.filter(Record.id == record_id).one_or_none()
+        if record is None:
+            abort('no record with this id')
+        try:
+            record.delete()
+        
+        except ValueError as e:
+            print(e)
+        
+        return jsonify({
+            'success': True,
+            'record_deleted': record.id,
+        })
+        
     return app
 app = create_app()
 
