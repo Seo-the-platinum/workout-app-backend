@@ -89,7 +89,8 @@ def create_app(test_config=None):
                 inches = res['inches'],
                 sex = res['sex'],
                 user_name = res['user_name'],
-                weight = res['weight']
+                weight = res['weight'],
+                weight_units = res['weight_units']
             )
             user.insert()
 

@@ -45,7 +45,7 @@ class Record(db.Model):
 
     def update(self):
         db.session.commit()
-        
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -70,19 +70,20 @@ class User(db.Model):
     user_name = Column(String(25), nullable=False)
     feet = Column(Integer, nullable=False)
     inches = Column(Integer, nullable=False)
-    weight = Column(String(6), nullable=False)
+    weight = Column(Integer, nullable=False)
+    weight_units = Column(String(3), nullable=False)
     records = db.relationship(
         'Record',
-        cascade = 'all, delete',
+        cascade = 'all, delete-orphan',
         backref = db.backref('lifter')
     )
     visits = db.relationship(
         'Visit',
-        cascade = 'all, delete',
+        cascade = 'all, delete-orphan',
         backref = db.backref('guest')
     )
 
-    def __init__(self, age, email, user_name, feet, inches, weight, sex):
+    def __init__(self, age, email, user_name, feet, inches, weight, sex, weight_units):
         self.age = age
         self.email = email
         self.feet = feet
@@ -90,6 +91,7 @@ class User(db.Model):
         self.sex = sex
         self.user_name = user_name
         self.weight = weight
+        self.weight_units = weight_units
 
     def insert(self):
         db.session.add(self)
@@ -108,7 +110,8 @@ class User(db.Model):
             'inches':self.inches,
             'sex': self.sex,
             'user_name': self.user_name,
-            'weight': self.weight
+            'weight': self.weight,
+            'weight_units': self.weight_units,
         }
 
 
