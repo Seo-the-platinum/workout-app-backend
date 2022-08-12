@@ -15,6 +15,7 @@ def create_app(test_config=None):
         response.headers.add(
             'Access-Control-Allow-Methods', 'GET, DELETE , POST, PATCH')
         return response
+
     #----GET ENPOINTS----
 
     @app.route('/users', methods=['GET'])
@@ -170,6 +171,33 @@ def create_app(test_config=None):
             'record': record.format() 
         })
     
+    @app.route('/users/<int:user_id>', methods=['PATCH'])
+    def update_user(user_id):
+        res = request.get_json()
+        user = User.query.filter(
+            User.id == user_id
+        ).one_or_none()
+        
+        if user is None:
+            abort('no user with that id')
+        try:
+            user.age = res['age']
+            user.feet = res['feet']
+            user.inches = res['inches']
+            user.user_name = res['user_name']
+            user.weight = res['weight']
+            user.weight_units = res['weight_units']
+
+            user.update()
+
+        except ValueError as e:
+            print(e)
+
+        return jsonify({
+            'success': True,
+            'user': user.format()
+        })
+        
     #----DELETE ENDPOINTS----
 
     @app.route('/records/delete/<int:record_id>', methods=['DELETE'])
