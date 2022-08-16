@@ -77,12 +77,7 @@ class User(db.Model):
         cascade = 'all, delete-orphan',
         backref = db.backref('lifter')
     )
-    visits = db.relationship(
-        'Visit',
-        cascade = 'all, delete-orphan',
-        backref = db.backref('guest')
-    )
-
+ 
     def __init__(self, age, email, user_name, feet, inches, weight, sex, weight_units):
         self.age = age
         self.email = email
@@ -115,27 +110,4 @@ class User(db.Model):
             'user_name': self.user_name,
             'weight': self.weight,
             'weight_units': self.weight_units,
-        }
-
-
-class Visit(db.Model):
-    __tablename__ = 'visit'
-
-    id = Column(Integer, primary_key=True)
-    date = Column(DateTime)
-    user_id =Column(Integer, ForeignKey('user.id'), nullable=False)
-
-    def __init__(self, date, user_id):
-        self.date = date,
-        self.user_id = user_id
-    
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-    
-    def format(self):
-        return {
-            'id': self.id,
-            'date': self.date,
-            'user_id': self.user_id,
         }

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, abort
-from models import setup_db, User, Visit, Record
+from models import setup_db, User, Record
 from flask_cors import CORS
 import sys
 
@@ -101,25 +101,6 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'user': user.id,
-        })
-
-    @app.route('/visits/create', methods=['POST'])
-    def create_visit():
-        try:
-            res = request.get_json()
-            print(res)
-            visit = Visit(
-                date = res['date'],
-                user_id = res['user_id'],
-            )
-            visit.insert()
-
-        except ValueError as e:
-            print(e)
-        
-        return jsonify({
-            'success': True,
-            'visit': visit.id
         })
 
     @app.route('/records/create', methods=['POST'])
