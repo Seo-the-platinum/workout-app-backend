@@ -11,7 +11,7 @@ db = SQLAlchemy()
 
 database_path = (
     #"postgresql://nrmkqlnllkiwnn:8fce5b5656fcf2611c7649946e26f279cfa830ce42afc6e035ef29a9e2585f07@ec2-44-205-112-253.compute-1.amazonaws.com:5432/daqg2chp8idec1"
-    os.environ.get('DATABASE_URL')
+    os.environ.get('DATABASE_URI')
 )
 
 def setup_db(app, database_path=database_path):
